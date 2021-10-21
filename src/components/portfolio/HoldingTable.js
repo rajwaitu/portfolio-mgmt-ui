@@ -129,6 +129,12 @@ class HoldingTable extends Component {
                         <th scope="col" className="border-0">
                           Net.Chg
                         </th>
+                        <th scope="col" className="border-0">
+                          Maxima
+                        </th>
+                        <th scope="col" className="border-0">
+                          Depth
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -143,6 +149,8 @@ class HoldingTable extends Component {
                       <td>{item.currentValue}</td>
                       <td>{item.profitLoss}</td>
                       <td>{item.netChange}</td>
+                      <td>{item.maxima}</td>
+                      <td>{item.depth}</td>
                     </tr>
                   ))}
                     </tbody>
