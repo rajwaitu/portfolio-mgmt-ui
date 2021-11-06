@@ -7,14 +7,19 @@ export default function() {
       htmlAfter: ""
     },
     {
-      title: "Market News",
-      htmlBefore: '<i class="material-icons">feed</i>',
-      to: "/market-news",
+      title: "Stock Dashboard",
+      htmlBefore: '<i class="material-icons">grid_view</i>',
+      to: "/stock-dashboard",
     },
     {
       title: "Stock WatchList",
       htmlBefore: '<i class="material-icons">view_list</i>',
       to: "/watchlist",
+    },
+    {
+      title: "Market News",
+      htmlBefore: '<i class="material-icons">feed</i>',
+      to: "/market-news",
     },
     {
       title: "Add New Post",

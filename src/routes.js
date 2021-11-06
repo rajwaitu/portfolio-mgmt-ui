@@ -15,6 +15,7 @@ import Tables from "./views/Tables";
 import PortfolioDashboard from "./components/portfolio/PortfolioDashboard";
 import StockWatchList from "./components/watchlist/StockWatchList";
 import StockNews from "./components/stock-news/StockNews";
+import StockDashboard from "./components/stocks/StockDashboard";
 
 export default [
   {
@@ -27,6 +28,11 @@ export default [
     path: "/portfolio-overview",
     layout: DefaultLayout,
     component: PortfolioDashboard
+  },
+  {
+    path: "/stock-dashboard",
+    layout: DefaultLayout,
+    component: StockDashboard
   },
   {
     path: "/watchlist",
