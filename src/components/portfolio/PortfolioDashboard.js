@@ -5,6 +5,7 @@ import PageTitle from "../common/PageTitle";
 import PortfolioDropdown from "./PortfolioDropdown";
 import HoldingList from "./HoldingList";
 import InvestmentHistory from "./InvestmentHistory";
+import HoldingWeights from "./HoldingWeights";
 
 class PortfolioDashboard extends Component {
 
@@ -49,6 +50,13 @@ class PortfolioDashboard extends Component {
               {/* Investment Overview */}
               <Col lg="12" md="12" sm="12" className="mb-4">
                 <InvestmentHistory portfolio={this.state.current_portfolio} investment={{}} investmentLoaded={false}/>
+              </Col>
+            </Row>
+
+            <Row>
+              {/* Holding Weight Overview */}
+              <Col lg="12" md="12" sm="12" className="mb-4">
+                <HoldingWeights portfolio={this.state.current_portfolio} holdingWeightLoaded={false}/>
               </Col>
             </Row>
            </Container>
