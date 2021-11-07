@@ -3,6 +3,8 @@ import { Row, Col,CardBody,Button } from "shards-react";
 
 import HoldingTable from "./HoldingTable";
 import AddHoldingView from "./AddHoldingView";
+import EditHoldingView from "./EditHoldingView";
+import DeleteHoldingView from "./DeleteHoldingView";
 
 class HoldingList extends Component {
 
@@ -14,13 +16,24 @@ class HoldingList extends Component {
             holdingView:{},
             holdingViewLoaded:false,
             isAddHoldingOpen:false,
+            isEditHoldingOpen:false,
+            isDeleteHoldingOpen:false,
             isWaitingOpen:false
         };
 
         this.fetchHoldingList = this.fetchHoldingList.bind(this);
+        this.getAPIUrl = this.getAPIUrl.bind(this);
+
         this.openAddHolding = this.openAddHolding.bind(this);
+        this.openEditHolding = this.openEditHolding.bind(this);
+        this.openDeleteHolding = this.openDeleteHolding.bind(this);
+        this.closeAddHolding = this.closeAddHolding.bind(this);
+        this.closeEditHolding = this.closeEditHolding.bind(this);
+        this.closeDeleteHolding = this.closeDeleteHolding.bind(this);
 
         this.addHolding = this.addHolding.bind(this);
+        this.editHolding = this.editHolding.bind(this);
+        this.deleteHolding = this.deleteHolding.bind(this);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -64,15 +77,7 @@ class HoldingList extends Component {
         let apiUrl;
         let holdings = []
 
-        if (this.state.current_portfolio === 'zerodha') {
-            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/1/holding'
-        }else if(this.state.current_portfolio === 'upstox'){
-            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/2/holding'
-        }else if(this.state.current_portfolio === 'angel'){
-            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/3/holding'
-        }else if(this.state.current_portfolio === 'groww'){
-            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/4/holding'
-        }
+        apiUrl = this.getAPIUrl(this.state.current_portfolio )
 
         let holding = {
             "company": company,
@@ -103,15 +108,95 @@ class HoldingList extends Component {
         });
     }
 
+    async editHolding(scrip,qty,avg_price){
+        let apiUrl;
+        let holdings = []
+
+        apiUrl = this.getAPIUrl(this.state.current_portfolio )
+
+        let holding = {
+            "scrip": scrip,
+            "quantity": qty,
+            "avgprice": avg_price
+           }
+
+        holdings.push(holding)
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ holdingList: holdings })
+        };
+
+        await fetch(apiUrl,requestOptions)
+        .then((response) => {
+            if(!response.ok) console.log("holding edit failed");
+            else{
+                this.fetchHoldingList(this.state.current_portfolio);
+                this.setState({ isEditHoldingOpen: false });
+                this.setState({ isWaitingOpen: false });
+            }
+        })
+        .catch((error) => {
+            console.log('error: ' + error);
+        });
+    }
+
+    async deleteHolding(scrip){
+        let apiUrl;
+        apiUrl = this.getAPIUrl(this.state.current_portfolio )
+
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ scrip: scrip })
+        };
+
+        await fetch(apiUrl,requestOptions)
+        .then((response) => {
+            if(!response.ok) console.log("holding deletion failed");
+            else{
+                this.fetchHoldingList(this.state.current_portfolio);
+                this.setState({ isDeleteHoldingOpen: false });
+                this.setState({ isWaitingOpen: false });
+            }
+        })
+        .catch((error) => {
+            console.log('error: ' + error);
+        });
+
+    }
+
     openAddHolding = () => this.setState({ isAddHoldingOpen: true });
+    openDeleteHolding = () => this.setState({ isDeleteHoldingOpen: true });
+    openEditHolding = () => this.setState({ isEditHoldingOpen: true });
+    closeAddHolding = () => this.setState({ isAddHoldingOpen: false });
+    closeDeleteHolding = () => this.setState({ isDeleteHoldingOpen: false });
+    closeEditHolding = () => this.setState({ isEditHoldingOpen: false });
 
     async componentDidMount() {
         this.fetchHoldingList(this.props.portfolio);
     }
 
+    getAPIUrl(portfolio) {
+        let apiUrl;
+        if (portfolio === 'zerodha') {
+            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/1/holding'
+        }else if(portfolio === 'upstox'){
+            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/2/holding'
+        }else if(portfolio === 'angel'){
+            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/3/holding'
+        }else if(portfolio === 'groww'){
+            apiUrl = 'http://localhost:8000/v1/api/user/rajwaitu@gmail.com/portfolio/4/holding'
+        }
+        return apiUrl;
+    }
+
     render() {
         const isLoaded = this.state.holdingViewLoaded;
         const isAddHoldingOpen = this.state.isAddHoldingOpen;
+        const isEditHoldingOpen = this.state.isEditHoldingOpen;
+        const isDeleteHoldingOpen = this.state.isDeleteHoldingOpen;
         const isWaitingOpen = this.state.isWaitingOpen;
 
         return (
@@ -123,8 +208,8 @@ class HoldingList extends Component {
                     <tbody>
                     <tr>
                         <td><Button onClick={this.openAddHolding} ><strong>Add Holding</strong></Button> <span></span><span></span>
-                        <Button><strong>Edit Holding</strong></Button> <span></span><span></span>
-                        <Button><strong>Delete Holding</strong></Button>
+                        <Button onClick={this.openEditHolding}><strong>Edit Holding</strong></Button> <span></span><span></span>
+                        <Button onClick={this.openDeleteHolding}><strong>Delete Holding</strong></Button>
                         </td>
                     </tr>
                     </tbody>
@@ -137,7 +222,27 @@ class HoldingList extends Component {
                     <Row> 
                     <Col className="col-lg mb-4">
                     <CardBody className="p-0 pb-3">
-                        <AddHoldingView isOpen={isAddHoldingOpen} isWaitingOpen={isWaitingOpen} addHolding={this.addHolding} />
+                        <AddHoldingView isOpen={isAddHoldingOpen} isWaitingOpen={isWaitingOpen} addHolding={this.addHolding} closeAddHolding={this.closeAddHolding} />
+                    </CardBody>
+                    </Col>
+                    </Row>)
+                 : <span></span>}
+
+                {isEditHoldingOpen ? (
+                    <Row> 
+                    <Col className="col-lg mb-4">
+                    <CardBody className="p-0 pb-3">
+                        <EditHoldingView isOpen={isEditHoldingOpen} isWaitingOpen={isWaitingOpen} editHolding={this.editHolding} closeEditHolding={this.closeEditHolding} />
+                    </CardBody>
+                    </Col>
+                    </Row>)
+                 : <span></span>}
+
+                {isDeleteHoldingOpen ? (
+                    <Row> 
+                    <Col className="col-lg mb-4">
+                    <CardBody className="p-0 pb-3">
+                        <DeleteHoldingView isOpen={isDeleteHoldingOpen} isWaitingOpen={isWaitingOpen} deleteHolding={this.deleteHolding} closeDeleteHolding={this.closeDeleteHolding}/>
                     </CardBody>
                     </Col>
                     </Row>)

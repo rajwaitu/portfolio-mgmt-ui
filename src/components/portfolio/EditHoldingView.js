@@ -9,7 +9,7 @@ import {
   Button
 } from "shards-react";
 
-class AddHoldingView extends Component  {
+class EditHoldingView extends Component  {
 
     constructor(props) {
         super(props);
@@ -18,16 +18,14 @@ class AddHoldingView extends Component  {
             isOpen:this.props.isOpen,
             isWaitingOpen:this.props.isWaitingOpen,
             scrip: "",
-            company: "",
             qty: 0,
             avg_price: 0.0
         }
 
         this.handleClose = this.handleClose.bind(this);
-        this.handleAddHolding = this.handleAddHolding.bind(this);
+        this.handleEditHolding = this.handleEditHolding.bind(this);
 
         this.handleScripChange = this.handleScripChange.bind(this);
-        this.handleCompanyChange = this.handleCompanyChange.bind(this);
         this.handleQTYChange = this.handleQTYChange.bind(this);
         this.handleAvgPriceChange = this.handleAvgPriceChange.bind(this);
     }
@@ -38,20 +36,19 @@ class AddHoldingView extends Component  {
     }
 
     handleScripChange = (event) => this.setState({ scrip: event.target.value });
-    handleCompanyChange = (event) => this.setState({ company: event.target.value });
     handleQTYChange = (event) => this.setState({ qty: event.target.value });
     handleAvgPriceChange = (event) => this.setState({ avg_price: event.target.value });
 
     handleClose(){
         this.setState({ isOpen: false });
-        this.props.closeAddHolding();
+        this.props.closeEditHolding();
     }
 
-    handleAddHolding(){
+    handleEditHolding(){
       this.setState({ isOpen: false });
       this.setState({ isWaitingOpen: true });
 
-      this.props.addHolding(this.state.scrip,this.state.company,this.state.qty,this.state.avg_price);
+      this.props.editHolding(this.state.scrip,this.state.qty,this.state.avg_price);
     }
   
     render() {
@@ -67,11 +64,6 @@ class AddHoldingView extends Component  {
                       <Col md="2">
                         <label htmlFor="scrip"><strong>Scrip</strong></label>
                         <FormInput id="scrip" type="text" placeholder="Scrip" value={this.state.scrip} onChange={this.handleScripChange}/>
-                      </Col>
-                      <Col md="2">
-                        <label htmlFor="company"><strong>Company</strong></label>
-                        <FormInput id="company" type="text" placeholder="Company" value={this.state.company} onChange={this.handleCompanyChange}
-                        />
                       </Col>
                       <Col md="2">
                         <label htmlFor="quantity"><strong>Quantity</strong></label>
@@ -90,7 +82,7 @@ class AddHoldingView extends Component  {
                       </Col>
                     </Row>
                     <Row>
-                      <Col md="6"><Button type="submit" onClick={this.handleAddHolding}>Add Holding</Button><span>               </span>
+                      <Col md="6"><Button type="submit" onClick={this.handleEditHolding}>Edit Holding</Button><span>               </span>
                       <Button type="submit" onClick={this.handleClose}>Cancel</Button>
                       </Col>
                     </Row>
@@ -103,10 +95,10 @@ class AddHoldingView extends Component  {
         : null
         }
 
-        {this.state.isWaitingOpen ? (<p><b>Add Holding is in progress...</b></p>) : null}
+        {this.state.isWaitingOpen ? (<p><b>Edit Holding is in progress...</b></p>) : null}
       
       </div>
     );
     }
   }
-export default AddHoldingView
+export default EditHoldingView
